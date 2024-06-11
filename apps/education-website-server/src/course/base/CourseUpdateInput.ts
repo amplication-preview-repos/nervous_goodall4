@@ -9,5 +9,82 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class CourseUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsOptional, IsInt, ValidateNested } from "class-validator";
+import { InstructorWhereUniqueInput } from "../../instructor/base/InstructorWhereUniqueInput";
+import { Type } from "class-transformer";
+import { StudentUpdateManyWithoutCoursesInput } from "./StudentUpdateManyWithoutCoursesInput";
+
+@InputType()
+class CourseUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  category?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  description?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: Number,
+  })
+  @IsInt()
+  @IsOptional()
+  @Field(() => Number, {
+    nullable: true,
+  })
+  duration?: number | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => InstructorWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => InstructorWhereUniqueInput)
+  @IsOptional()
+  @Field(() => InstructorWhereUniqueInput, {
+    nullable: true,
+  })
+  instructor?: InstructorWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => StudentUpdateManyWithoutCoursesInput,
+  })
+  @ValidateNested()
+  @Type(() => StudentUpdateManyWithoutCoursesInput)
+  @IsOptional()
+  @Field(() => StudentUpdateManyWithoutCoursesInput, {
+    nullable: true,
+  })
+  students?: StudentUpdateManyWithoutCoursesInput;
+}
+
 export { CourseUpdateInput as CourseUpdateInput };

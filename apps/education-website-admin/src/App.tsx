@@ -5,14 +5,14 @@ import { theme } from "./theme/theme";
 import Login from "./Login";
 import "./App.scss";
 import Dashboard from "./pages/Dashboard";
-import { CourseList } from "./course/CourseList";
-import { CourseCreate } from "./course/CourseCreate";
-import { CourseEdit } from "./course/CourseEdit";
-import { CourseShow } from "./course/CourseShow";
 import { CategoryList } from "./category/CategoryList";
 import { CategoryCreate } from "./category/CategoryCreate";
 import { CategoryEdit } from "./category/CategoryEdit";
 import { CategoryShow } from "./category/CategoryShow";
+import { CourseList } from "./course/CourseList";
+import { CourseCreate } from "./course/CourseCreate";
+import { CourseEdit } from "./course/CourseEdit";
+import { CourseShow } from "./course/CourseShow";
 import { StudentList } from "./student/StudentList";
 import { StudentCreate } from "./student/StudentCreate";
 import { StudentEdit } from "./student/StudentEdit";
@@ -48,18 +48,18 @@ const App = (): React.ReactElement => {
         loginPage={Login}
       >
         <Resource
-          name="Course"
-          list={CourseList}
-          edit={CourseEdit}
-          create={CourseCreate}
-          show={CourseShow}
-        />
-        <Resource
           name="Category"
           list={CategoryList}
           edit={CategoryEdit}
           create={CategoryCreate}
           show={CategoryShow}
+        />
+        <Resource
+          name="Course"
+          list={CourseList}
+          edit={CourseEdit}
+          create={CourseCreate}
+          show={CourseShow}
         />
         <Resource
           name="Student"

@@ -17,6 +17,8 @@ import { Category } from "./Category";
 import { CategoryCountArgs } from "./CategoryCountArgs";
 import { CategoryFindManyArgs } from "./CategoryFindManyArgs";
 import { CategoryFindUniqueArgs } from "./CategoryFindUniqueArgs";
+import { CreateCategoryArgs } from "./CreateCategoryArgs";
+import { UpdateCategoryArgs } from "./UpdateCategoryArgs";
 import { DeleteCategoryArgs } from "./DeleteCategoryArgs";
 import { CategoryService } from "../category.service";
 @graphql.Resolver(() => Category)
@@ -48,6 +50,35 @@ export class CategoryResolverBase {
       return null;
     }
     return result;
+  }
+
+  @graphql.Mutation(() => Category)
+  async createCategory(
+    @graphql.Args() args: CreateCategoryArgs
+  ): Promise<Category> {
+    return await this.service.createCategory({
+      ...args,
+      data: args.data,
+    });
+  }
+
+  @graphql.Mutation(() => Category)
+  async updateCategory(
+    @graphql.Args() args: UpdateCategoryArgs
+  ): Promise<Category | null> {
+    try {
+      return await this.service.updateCategory({
+        ...args,
+        data: args.data,
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
   }
 
   @graphql.Mutation(() => Category)

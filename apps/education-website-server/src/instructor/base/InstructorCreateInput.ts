@@ -9,5 +9,58 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class InstructorCreateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsOptional, ValidateNested } from "class-validator";
+import { CourseCreateNestedManyWithoutInstructorsInput } from "./CourseCreateNestedManyWithoutInstructorsInput";
+import { Type } from "class-transformer";
+
+@InputType()
+class InstructorCreateInput {
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  bio?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => CourseCreateNestedManyWithoutInstructorsInput,
+  })
+  @ValidateNested()
+  @Type(() => CourseCreateNestedManyWithoutInstructorsInput)
+  @IsOptional()
+  @Field(() => CourseCreateNestedManyWithoutInstructorsInput, {
+    nullable: true,
+  })
+  courses?: CourseCreateNestedManyWithoutInstructorsInput;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  email?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+}
+
 export { InstructorCreateInput as InstructorCreateInput };

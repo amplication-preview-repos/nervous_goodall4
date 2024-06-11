@@ -1,1 +1,4 @@
-export type CategoryUpdateInput = {};
+export type CategoryUpdateInput = {
+  description?: string | null;
+  name?: string | null;
+};

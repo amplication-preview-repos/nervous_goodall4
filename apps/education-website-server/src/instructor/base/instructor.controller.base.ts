@@ -22,6 +22,9 @@ import { Instructor } from "./Instructor";
 import { InstructorFindManyArgs } from "./InstructorFindManyArgs";
 import { InstructorWhereUniqueInput } from "./InstructorWhereUniqueInput";
 import { InstructorUpdateInput } from "./InstructorUpdateInput";
+import { CourseFindManyArgs } from "../../course/base/CourseFindManyArgs";
+import { Course } from "../../course/base/Course";
+import { CourseWhereUniqueInput } from "../../course/base/CourseWhereUniqueInput";
 
 export class InstructorControllerBase {
   constructor(protected readonly service: InstructorService) {}
@@ -33,8 +36,11 @@ export class InstructorControllerBase {
     return await this.service.createInstructor({
       data: data,
       select: {
+        bio: true,
         createdAt: true,
+        email: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -48,8 +54,11 @@ export class InstructorControllerBase {
     return this.service.instructors({
       ...args,
       select: {
+        bio: true,
         createdAt: true,
+        email: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -64,8 +73,11 @@ export class InstructorControllerBase {
     const result = await this.service.instructor({
       where: params,
       select: {
+        bio: true,
         createdAt: true,
+        email: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -89,8 +101,11 @@ export class InstructorControllerBase {
         where: params,
         data: data,
         select: {
+          bio: true,
           createdAt: true,
+          email: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });
@@ -114,8 +129,11 @@ export class InstructorControllerBase {
       return await this.service.deleteInstructor({
         where: params,
         select: {
+          bio: true,
           createdAt: true,
+          email: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });
@@ -127,5 +145,90 @@ export class InstructorControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/courses")
+  @ApiNestedQuery(CourseFindManyArgs)
+  async findCourses(
+    @common.Req() request: Request,
+    @common.Param() params: InstructorWhereUniqueInput
+  ): Promise<Course[]> {
+    const query = plainToClass(CourseFindManyArgs, request.query);
+    const results = await this.service.findCourses(params.id, {
+      ...query,
+      select: {
+        category: true,
+        createdAt: true,
+        description: true,
+        duration: true,
+        id: true,
+
+        instructor: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/courses")
+  async connectCourses(
+    @common.Param() params: InstructorWhereUniqueInput,
+    @common.Body() body: CourseWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      courses: {
+        connect: body,
+      },
+    };
+    await this.service.updateInstructor({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/courses")
+  async updateCourses(
+    @common.Param() params: InstructorWhereUniqueInput,
+    @common.Body() body: CourseWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      courses: {
+        set: body,
+      },
+    };
+    await this.service.updateInstructor({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/courses")
+  async disconnectCourses(
+    @common.Param() params: InstructorWhereUniqueInput,
+    @common.Body() body: CourseWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      courses: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateInstructor({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

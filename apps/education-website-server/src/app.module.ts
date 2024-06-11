@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { CourseModule } from "./course/course.module";
 import { CategoryModule } from "./category/category.module";
+import { CourseModule } from "./course/course.module";
 import { StudentModule } from "./student/student.module";
 import { InstructorModule } from "./instructor/instructor.module";
 import { HealthModule } from "./health/health.module";
@@ -15,8 +15,8 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 @Module({
   controllers: [],
   imports: [
-    CourseModule,
     CategoryModule,
+    CourseModule,
     StudentModule,
     InstructorModule,
     HealthModule,

@@ -22,6 +22,9 @@ import { Course } from "./Course";
 import { CourseFindManyArgs } from "./CourseFindManyArgs";
 import { CourseWhereUniqueInput } from "./CourseWhereUniqueInput";
 import { CourseUpdateInput } from "./CourseUpdateInput";
+import { StudentFindManyArgs } from "../../student/base/StudentFindManyArgs";
+import { Student } from "../../student/base/Student";
+import { StudentWhereUniqueInput } from "../../student/base/StudentWhereUniqueInput";
 
 export class CourseControllerBase {
   constructor(protected readonly service: CourseService) {}
@@ -29,10 +32,29 @@ export class CourseControllerBase {
   @swagger.ApiCreatedResponse({ type: Course })
   async createCourse(@common.Body() data: CourseCreateInput): Promise<Course> {
     return await this.service.createCourse({
-      data: data,
+      data: {
+        ...data,
+
+        instructor: data.instructor
+          ? {
+              connect: data.instructor,
+            }
+          : undefined,
+      },
       select: {
+        category: true,
         createdAt: true,
+        description: true,
+        duration: true,
         id: true,
+
+        instructor: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
         updatedAt: true,
       },
     });
@@ -46,8 +68,19 @@ export class CourseControllerBase {
     return this.service.courses({
       ...args,
       select: {
+        category: true,
         createdAt: true,
+        description: true,
+        duration: true,
         id: true,
+
+        instructor: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
         updatedAt: true,
       },
     });
@@ -62,8 +95,19 @@ export class CourseControllerBase {
     const result = await this.service.course({
       where: params,
       select: {
+        category: true,
         createdAt: true,
+        description: true,
+        duration: true,
         id: true,
+
+        instructor: {
+          select: {
+            id: true,
+          },
+        },
+
+        name: true,
         updatedAt: true,
       },
     });
@@ -85,10 +129,29 @@ export class CourseControllerBase {
     try {
       return await this.service.updateCourse({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          instructor: data.instructor
+            ? {
+                connect: data.instructor,
+              }
+            : undefined,
+        },
         select: {
+          category: true,
           createdAt: true,
+          description: true,
+          duration: true,
           id: true,
+
+          instructor: {
+            select: {
+              id: true,
+            },
+          },
+
+          name: true,
           updatedAt: true,
         },
       });
@@ -112,8 +175,19 @@ export class CourseControllerBase {
       return await this.service.deleteCourse({
         where: params,
         select: {
+          category: true,
           createdAt: true,
+          description: true,
+          duration: true,
           id: true,
+
+          instructor: {
+            select: {
+              id: true,
+            },
+          },
+
+          name: true,
           updatedAt: true,
         },
       });
@@ -125,5 +199,87 @@ export class CourseControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/students")
+  @ApiNestedQuery(StudentFindManyArgs)
+  async findStudents(
+    @common.Req() request: Request,
+    @common.Param() params: CourseWhereUniqueInput
+  ): Promise<Student[]> {
+    const query = plainToClass(StudentFindManyArgs, request.query);
+    const results = await this.service.findStudents(params.id, {
+      ...query,
+      select: {
+        course: {
+          select: {
+            id: true,
+          },
+        },
+
+        createdAt: true,
+        email: true,
+        id: true,
+        name: true,
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/students")
+  async connectStudents(
+    @common.Param() params: CourseWhereUniqueInput,
+    @common.Body() body: StudentWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      students: {
+        connect: body,
+      },
+    };
+    await this.service.updateCourse({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/students")
+  async updateStudents(
+    @common.Param() params: CourseWhereUniqueInput,
+    @common.Body() body: StudentWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      students: {
+        set: body,
+      },
+    };
+    await this.service.updateCourse({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/students")
+  async disconnectStudents(
+    @common.Param() params: CourseWhereUniqueInput,
+    @common.Body() body: StudentWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      students: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateCourse({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

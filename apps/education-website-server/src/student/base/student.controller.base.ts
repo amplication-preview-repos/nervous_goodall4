@@ -31,10 +31,26 @@ export class StudentControllerBase {
     @common.Body() data: StudentCreateInput
   ): Promise<Student> {
     return await this.service.createStudent({
-      data: data,
+      data: {
+        ...data,
+
+        course: data.course
+          ? {
+              connect: data.course,
+            }
+          : undefined,
+      },
       select: {
+        course: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
+        email: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -48,8 +64,16 @@ export class StudentControllerBase {
     return this.service.students({
       ...args,
       select: {
+        course: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
+        email: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -64,8 +88,16 @@ export class StudentControllerBase {
     const result = await this.service.student({
       where: params,
       select: {
+        course: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
+        email: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -87,10 +119,26 @@ export class StudentControllerBase {
     try {
       return await this.service.updateStudent({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          course: data.course
+            ? {
+                connect: data.course,
+              }
+            : undefined,
+        },
         select: {
+          course: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
+          email: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });
@@ -114,8 +162,16 @@ export class StudentControllerBase {
       return await this.service.deleteStudent({
         where: params,
         select: {
+          course: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
+          email: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });

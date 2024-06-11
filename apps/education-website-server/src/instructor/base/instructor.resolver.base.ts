@@ -17,7 +17,11 @@ import { Instructor } from "./Instructor";
 import { InstructorCountArgs } from "./InstructorCountArgs";
 import { InstructorFindManyArgs } from "./InstructorFindManyArgs";
 import { InstructorFindUniqueArgs } from "./InstructorFindUniqueArgs";
+import { CreateInstructorArgs } from "./CreateInstructorArgs";
+import { UpdateInstructorArgs } from "./UpdateInstructorArgs";
 import { DeleteInstructorArgs } from "./DeleteInstructorArgs";
+import { CourseFindManyArgs } from "../../course/base/CourseFindManyArgs";
+import { Course } from "../../course/base/Course";
 import { InstructorService } from "../instructor.service";
 @graphql.Resolver(() => Instructor)
 export class InstructorResolverBase {
@@ -51,6 +55,35 @@ export class InstructorResolverBase {
   }
 
   @graphql.Mutation(() => Instructor)
+  async createInstructor(
+    @graphql.Args() args: CreateInstructorArgs
+  ): Promise<Instructor> {
+    return await this.service.createInstructor({
+      ...args,
+      data: args.data,
+    });
+  }
+
+  @graphql.Mutation(() => Instructor)
+  async updateInstructor(
+    @graphql.Args() args: UpdateInstructorArgs
+  ): Promise<Instructor | null> {
+    try {
+      return await this.service.updateInstructor({
+        ...args,
+        data: args.data,
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Instructor)
   async deleteInstructor(
     @graphql.Args() args: DeleteInstructorArgs
   ): Promise<Instructor | null> {
@@ -64,5 +97,19 @@ export class InstructorResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [Course], { name: "courses" })
+  async findCourses(
+    @graphql.Parent() parent: Instructor,
+    @graphql.Args() args: CourseFindManyArgs
+  ): Promise<Course[]> {
+    const results = await this.service.findCourses(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
   }
 }

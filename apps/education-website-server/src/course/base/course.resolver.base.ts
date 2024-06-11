@@ -17,7 +17,12 @@ import { Course } from "./Course";
 import { CourseCountArgs } from "./CourseCountArgs";
 import { CourseFindManyArgs } from "./CourseFindManyArgs";
 import { CourseFindUniqueArgs } from "./CourseFindUniqueArgs";
+import { CreateCourseArgs } from "./CreateCourseArgs";
+import { UpdateCourseArgs } from "./UpdateCourseArgs";
 import { DeleteCourseArgs } from "./DeleteCourseArgs";
+import { StudentFindManyArgs } from "../../student/base/StudentFindManyArgs";
+import { Student } from "../../student/base/Student";
+import { Instructor } from "../../instructor/base/Instructor";
 import { CourseService } from "../course.service";
 @graphql.Resolver(() => Course)
 export class CourseResolverBase {
@@ -49,6 +54,49 @@ export class CourseResolverBase {
   }
 
   @graphql.Mutation(() => Course)
+  async createCourse(@graphql.Args() args: CreateCourseArgs): Promise<Course> {
+    return await this.service.createCourse({
+      ...args,
+      data: {
+        ...args.data,
+
+        instructor: args.data.instructor
+          ? {
+              connect: args.data.instructor,
+            }
+          : undefined,
+      },
+    });
+  }
+
+  @graphql.Mutation(() => Course)
+  async updateCourse(
+    @graphql.Args() args: UpdateCourseArgs
+  ): Promise<Course | null> {
+    try {
+      return await this.service.updateCourse({
+        ...args,
+        data: {
+          ...args.data,
+
+          instructor: args.data.instructor
+            ? {
+                connect: args.data.instructor,
+              }
+            : undefined,
+        },
+      });
+    } catch (error) {
+      if (isRecordNotFoundError(error)) {
+        throw new GraphQLError(
+          `No resource was found for ${JSON.stringify(args.where)}`
+        );
+      }
+      throw error;
+    }
+  }
+
+  @graphql.Mutation(() => Course)
   async deleteCourse(
     @graphql.Args() args: DeleteCourseArgs
   ): Promise<Course | null> {
@@ -62,5 +110,34 @@ export class CourseResolverBase {
       }
       throw error;
     }
+  }
+
+  @graphql.ResolveField(() => [Student], { name: "students" })
+  async findStudents(
+    @graphql.Parent() parent: Course,
+    @graphql.Args() args: StudentFindManyArgs
+  ): Promise<Student[]> {
+    const results = await this.service.findStudents(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @graphql.ResolveField(() => Instructor, {
+    nullable: true,
+    name: "instructor",
+  })
+  async getInstructor(
+    @graphql.Parent() parent: Course
+  ): Promise<Instructor | null> {
+    const result = await this.service.getInstructor(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

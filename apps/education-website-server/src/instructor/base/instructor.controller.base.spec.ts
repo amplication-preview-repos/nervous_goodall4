@@ -18,25 +18,37 @@ import { InstructorService } from "../instructor.service";
 const nonExistingId = "nonExistingId";
 const existingId = "existingId";
 const CREATE_INPUT = {
+  bio: "exampleBio",
   createdAt: new Date(),
+  email: "exampleEmail",
   id: "exampleId",
+  name: "exampleName",
   updatedAt: new Date(),
 };
 const CREATE_RESULT = {
+  bio: "exampleBio",
   createdAt: new Date(),
+  email: "exampleEmail",
   id: "exampleId",
+  name: "exampleName",
   updatedAt: new Date(),
 };
 const FIND_MANY_RESULT = [
   {
+    bio: "exampleBio",
     createdAt: new Date(),
+    email: "exampleEmail",
     id: "exampleId",
+    name: "exampleName",
     updatedAt: new Date(),
   },
 ];
 const FIND_ONE_RESULT = {
+  bio: "exampleBio",
   createdAt: new Date(),
+  email: "exampleEmail",
   id: "exampleId",
+  name: "exampleName",
   updatedAt: new Date(),
 };
 

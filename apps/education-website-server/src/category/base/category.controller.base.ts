@@ -34,7 +34,9 @@ export class CategoryControllerBase {
       data: data,
       select: {
         createdAt: true,
+        description: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -49,7 +51,9 @@ export class CategoryControllerBase {
       ...args,
       select: {
         createdAt: true,
+        description: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -65,7 +69,9 @@ export class CategoryControllerBase {
       where: params,
       select: {
         createdAt: true,
+        description: true,
         id: true,
+        name: true,
         updatedAt: true,
       },
     });
@@ -90,7 +96,9 @@ export class CategoryControllerBase {
         data: data,
         select: {
           createdAt: true,
+          description: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });
@@ -115,7 +123,9 @@ export class CategoryControllerBase {
         where: params,
         select: {
           createdAt: true,
+          description: true,
           id: true,
+          name: true,
           updatedAt: true,
         },
       });

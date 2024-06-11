@@ -13,7 +13,9 @@ export const CategoryList = (props: ListProps): React.ReactElement => {
     >
       <Datagrid rowClick="show">
         <DateField source="createdAt" label="Created At" />
+        <TextField label="description" source="description" />
         <TextField label="ID" source="id" />
+        <TextField label="name" source="name" />
         <DateField source="updatedAt" label="Updated At" />
       </Datagrid>
     </List>

@@ -10,7 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, Instructor as PrismaInstructor } from "@prisma/client";
+import {
+  Prisma,
+  Instructor as PrismaInstructor,
+  Course as PrismaCourse,
+} from "@prisma/client";
 
 export class InstructorServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -45,5 +49,16 @@ export class InstructorServiceBase {
     args: Prisma.SelectSubset<T, Prisma.InstructorDeleteArgs>
   ): Promise<PrismaInstructor> {
     return this.prisma.instructor.delete(args);
+  }
+
+  async findCourses(
+    parentId: string,
+    args: Prisma.CourseFindManyArgs
+  ): Promise<PrismaCourse[]> {
+    return this.prisma.instructor
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .courses(args);
   }
 }

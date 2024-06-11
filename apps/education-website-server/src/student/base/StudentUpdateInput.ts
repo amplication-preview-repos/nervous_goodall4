@@ -9,5 +9,47 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class StudentUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { CourseWhereUniqueInput } from "../../course/base/CourseWhereUniqueInput";
+import { ValidateNested, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+
+@InputType()
+class StudentUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => CourseWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => CourseWhereUniqueInput)
+  @IsOptional()
+  @Field(() => CourseWhereUniqueInput, {
+    nullable: true,
+  })
+  course?: CourseWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  email?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  name?: string | null;
+}
+
 export { StudentUpdateInput as StudentUpdateInput };
